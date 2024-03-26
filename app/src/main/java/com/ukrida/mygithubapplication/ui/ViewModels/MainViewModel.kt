@@ -1,4 +1,4 @@
-package com.ukrida.mygithubapplication.ui
+package com.ukrida.mygithubapplication.ui.ViewModels
 
 import android.util.Log
 import androidx.lifecycle.LiveData

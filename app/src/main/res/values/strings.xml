@@ -3,6 +3,9 @@
     <string name="github_username">Github User Name</string>
     <string name="github_followers">Github Followers</string>
     <string name="searchbar_hint">Who are you Looking For?</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="tab_text_1">Followers</string>
+    <string name="tab_text_2">Following</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_name">Username</string>
+    <string name="real_name">Name</string>
 </resources>

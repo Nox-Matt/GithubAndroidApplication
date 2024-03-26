@@ -1,15 +1,15 @@
 package com.ukrida.mygithubapplication.ui
 
-import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
+import com.ukrida.mygithubapplication.data.respond.GithubItem
 import com.ukrida.mygithubapplication.databinding.ActivityMainBinding
+import com.ukrida.mygithubapplication.ui.Adapters.GithubAdapter
+import com.ukrida.mygithubapplication.ui.ViewModels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +38,15 @@ class MainActivity : AppCompatActivity() {
         showLoading(true)
 
         adapter = GithubAdapter(ArrayList())
+        adapter.setOnItemClickCallback(object: GithubAdapter.OnItemClickCallback{
+            override fun onItemClicked(data: GithubItem) {
+                Intent(this@MainActivity, DetailActivity::class.java).also{
+                    it.putExtra(DetailActivity.GITHUB_USERNAME,data.login)
+                    startActivity(it)
+                }
+            }
+
+        })
         binding.rvGithubUser.adapter = adapter
 
         viewModel = ViewModelProvider(
