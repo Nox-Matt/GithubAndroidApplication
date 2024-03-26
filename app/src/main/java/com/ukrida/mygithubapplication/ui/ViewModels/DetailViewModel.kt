@@ -18,6 +18,7 @@ class DetailViewModel : ViewModel(){
         private const val DETAIL = "DetailViewModel"
     }
     fun setUserDetail(username: String){
+
         isLoading.value = true
         val client = ApiConfig.getApiService().getDetailUsers(username)
         client.enqueue(object : Callback<DetailResponse> {
