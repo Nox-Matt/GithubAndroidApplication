@@ -20,7 +20,6 @@ class FollowersFragment : Fragment(R.layout.fragment_followers) {
     private lateinit var viewModel: FollowersViewModel
     private lateinit var adapter: DetailAdapter
     private lateinit var username: String
-    private val isLoading = MutableLiveData<Boolean>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +27,7 @@ class FollowersFragment : Fragment(R.layout.fragment_followers) {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFollowersBinding.inflate(inflater, container, false)
+        showLoading(true)
         return binding.root
     }
 
@@ -50,11 +50,14 @@ class FollowersFragment : Fragment(R.layout.fragment_followers) {
         viewModel.getFollowers().observe(viewLifecycleOwner) { followers ->
             followers.let {
                 adapter.updateData(it)
-                isLoading.value = true
+                Log.d("FollowersFragment", "Followers: $it")
+                showLoading(false)
             }
         }
     }
-
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

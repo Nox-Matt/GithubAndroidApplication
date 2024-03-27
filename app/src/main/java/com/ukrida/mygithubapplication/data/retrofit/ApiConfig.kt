@@ -7,21 +7,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiConfig {
-    companion object{
+    companion object {
         private const val BASE_URL = "https://api.github.com/"
-        private const val AUTH_TOKEN = "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"
+        private const val AUTH_TOKEN =
+            "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"
+
         fun getApiService(): ApiService {
-            val loggingInterceptor = if(BuildConfig.DEBUG) {
-                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-            } else {
-                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             }
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor { chain ->
                     val request = chain.request().newBuilder()
-                        .header("Authorization", "token $AUTH_TOKEN")
+                        .header("Authorization", "Bearer $AUTH_TOKEN")
                         .build()
                     chain.proceed(request)
                 }

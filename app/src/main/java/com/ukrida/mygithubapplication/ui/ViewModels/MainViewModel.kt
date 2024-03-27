@@ -20,7 +20,6 @@ class MainViewModel :ViewModel() {
     }
 
     fun setUsersData(query: String) {
-        Log.d("Tags", "Username: $query")
         isLoading.value = true
         val client = ApiConfig.getApiService().getUsers(query)
         client.enqueue(object : retrofit2.Callback<GithubResponse> {

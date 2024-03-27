@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ukrida.mygithubapplication.R
@@ -20,7 +19,6 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
     private lateinit var viewModel: FollowingViewModel
     private lateinit var adapter: DetailAdapter
     private lateinit var username: String
-    private val isLoading = MutableLiveData<Boolean>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +26,7 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFollowersBinding.inflate(inflater, container, false)
+        showLoading(true)
         return binding.root
     }
 
@@ -50,11 +49,13 @@ class FollowingFragment : Fragment(R.layout.fragment_following) {
         viewModel.getFollowing().observe(viewLifecycleOwner) { following ->
             following.let {
                 adapter.updateData(it)
-                isLoading.value = true
+                showLoading(false)
             }
         }
     }
-
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -16,10 +16,14 @@ interface ApiService {
     ) : Call<DetailResponse>
     @GET("users/{username}/followers")
     fun getUsersFollowers(
-        @Path("username") username: String
+        @Path("username") username: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int = 100
     ): Call<List<DetailResponse>>
     @GET("users/{username}/following")
     fun getUsersFollowing(
-        @Path("username") username: String
+        @Path("username") username: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int = 100
     ): Call<List<DetailResponse>>
 }

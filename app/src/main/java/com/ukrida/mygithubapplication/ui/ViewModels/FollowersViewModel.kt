@@ -1,7 +1,6 @@
 package com.ukrida.mygithubapplication.ui.ViewModels
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ukrida.mygithubapplication.data.respond.DetailResponse
@@ -16,12 +15,17 @@ class FollowersViewModel : ViewModel() {
         private const val TAGX = "FollowersViewModel"
     }
 
-    val listOfFollowers = MutableLiveData<ArrayList<DetailResponse>>()
+    val listOfFollowers = MutableLiveData<List<DetailResponse>>()
     private val isLoading = MutableLiveData<Boolean>()
+    private var currentPage = 1
 
     fun setListFollowers(username: String) {
         isLoading.value = true
-        val client = ApiConfig.getApiService().getUsersFollowers(username)
+        loadFollowers(username, currentPage)
+    }
+
+    private fun loadFollowers(username: String, page: Int) {
+        val client = ApiConfig.getApiService().getUsersFollowers(username, page)
         client.enqueue(object : retrofit2.Callback<List<DetailResponse>> {
             override fun onResponse(
                 call: Call<List<DetailResponse>>,
@@ -29,7 +33,17 @@ class FollowersViewModel : ViewModel() {
             ) {
                 isLoading.value = false
                 if (response.isSuccessful) {
-                    listOfFollowers.value = response.body() as ArrayList<DetailResponse>
+                    val followers = response.body()
+                    if (followers != null) {
+                        if (followers.isNotEmpty()) {
+                            val currentList = listOfFollowers.value ?: emptyList()
+                            listOfFollowers.value = currentList + followers
+                            currentPage++
+                            loadFollowers(username, currentPage)
+                        }
+                    } else {
+                        Log.e(TAGX, "No Followers")
+                    }
                 } else {
                     Log.e(TAGX, "onFailure: ${response.message()}")
                 }
@@ -41,7 +55,8 @@ class FollowersViewModel : ViewModel() {
             }
         })
     }
-    fun getFollowers(): LiveData<ArrayList<DetailResponse>> {
+
+    fun getFollowers(): MutableLiveData<List<DetailResponse>> {
         return listOfFollowers
     }
 }

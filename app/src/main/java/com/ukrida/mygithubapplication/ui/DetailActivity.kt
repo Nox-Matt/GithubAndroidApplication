@@ -4,6 +4,7 @@ import SectionPageAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -31,6 +32,7 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
+        showLoading(true)
         setContentView(binding.root)
 
         val username = intent.getStringExtra(GITHUB_USERNAME)
@@ -54,13 +56,13 @@ class DetailActivity : AppCompatActivity() {
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .centerCrop()
                         .into(imageView)
+                    showLoading(false)
                 }
             }
 
-            val bundle = Bundle().apply {
+            val sectionPageAdapter = SectionPageAdapter(this, Bundle().apply {
                 putString(GITHUB_USERNAME, username)
-            }
-            val sectionPageAdapter = SectionPageAdapter(this, bundle)
+            })
             val viewPager: ViewPager2 = findViewById(R.id.view_pager)
             viewPager.adapter = sectionPageAdapter
             val tabs: TabLayout = findViewById(R.id.tabs)
@@ -70,5 +72,8 @@ class DetailActivity : AppCompatActivity() {
             }.attach()
             supportActionBar?.elevation = 0f
         }
+    }
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

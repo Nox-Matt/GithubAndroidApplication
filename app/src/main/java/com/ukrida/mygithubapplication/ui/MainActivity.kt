@@ -53,7 +53,9 @@ class MainActivity : AppCompatActivity() {
             this,
             ViewModelProvider.NewInstanceFactory()
         )[MainViewModel::class.java]
-        viewModel.setUsersData("Nox")
+        if (viewModel.getUsersData().value == null) {
+            viewModel.setUsersData("Nox")
+        }
 
         viewModel.getUsersData().observe(this) { users ->
             adapter.updateData(users)
