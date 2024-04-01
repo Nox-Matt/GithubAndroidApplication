@@ -1,12 +1,10 @@
 package com.ukrida.mygithubapplication.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ukrida.mygithubapplication.R
@@ -50,7 +48,6 @@ class FollowersFragment : Fragment(R.layout.fragment_followers) {
         viewModel.getFollowers().observe(viewLifecycleOwner) { followers ->
             followers.let {
                 adapter.updateData(it)
-                Log.d("FollowersFragment", "Followers: $it")
                 showLoading(false)
             }
         }

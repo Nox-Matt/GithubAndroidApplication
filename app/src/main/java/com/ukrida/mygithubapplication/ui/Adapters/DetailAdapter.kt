@@ -29,7 +29,6 @@ class DetailAdapter(private var detailItems: List<DetailResponse>) : RecyclerVie
 
     fun updateData(newDetailItems: List<DetailResponse>) {
         detailItems = newDetailItems
-        notifyDataSetChanged()
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

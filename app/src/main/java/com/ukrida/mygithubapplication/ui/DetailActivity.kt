@@ -16,6 +16,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.ukrida.mygithubapplication.R
 import com.ukrida.mygithubapplication.databinding.ActivityDetailBinding
 import com.ukrida.mygithubapplication.ui.ViewModels.DetailViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailActivity : AppCompatActivity() {
     companion object {
@@ -25,6 +29,8 @@ class DetailActivity : AppCompatActivity() {
             R.string.tab_text_2
         )
         const val GITHUB_USERNAME = "github_username"
+        const val GITHUB_ID = "github_id"
+        const val GITHUB_PP = "github_profile_pict"
     }
 
     private lateinit var binding: ActivityDetailBinding
@@ -36,11 +42,12 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val username = intent.getStringExtra(GITHUB_USERNAME)
+        val id = intent.getIntExtra(GITHUB_ID,0)
+        val avatarUrl = intent.getStringExtra(GITHUB_PP)
         Log.d("Tags", "Username: $username")
 
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.NewInstanceFactory()
         )[DetailViewModel::class.java]
         if (username != null) {
             viewModel.setUserDetail(username)
@@ -60,9 +67,38 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
 
-            val sectionPageAdapter = SectionPageAdapter(this, Bundle().apply {
+            var isFavorite = false
+            CoroutineScope(Dispatchers.IO).launch {
+                val count = viewModel.checkFavorite(id)
+                withContext(Dispatchers.Main){
+                    if(count != null) {
+                        isFavorite = count > 0
+                        binding.floatingActionButton2.setImageResource(
+                            if (isFavorite) R.drawable.favorite_filled else R.drawable.favorite_border
+                        )
+                    }
+                }
+            }
+
+            binding.floatingActionButton2.setOnClickListener {
+                isFavorite = !isFavorite
+                binding.floatingActionButton2.setImageResource(
+                    if (isFavorite) R.drawable.favorite_filled else R.drawable.favorite_border
+                )
+                if (isFavorite) {
+                    if (avatarUrl != null) {
+                        viewModel.addToFavorite(id, username, avatarUrl)
+                    }
+                } else {
+                    viewModel.removeFavorite(id)
+                }
+            }
+        }
+
+            val bundle = Bundle().apply {
                 putString(GITHUB_USERNAME, username)
-            })
+            }
+            val sectionPageAdapter = SectionPageAdapter(this, bundle)
             val viewPager: ViewPager2 = findViewById(R.id.view_pager)
             viewPager.adapter = sectionPageAdapter
             val tabs: TabLayout = findViewById(R.id.tabs)
@@ -72,7 +108,7 @@ class DetailActivity : AppCompatActivity() {
             }.attach()
             supportActionBar?.elevation = 0f
         }
-    }
+
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }

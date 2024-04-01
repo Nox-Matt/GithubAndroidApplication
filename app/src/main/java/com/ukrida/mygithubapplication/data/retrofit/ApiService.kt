@@ -18,12 +18,12 @@ interface ApiService {
     fun getUsersFollowers(
         @Path("username") username: String,
         @Query("page") page: Int,
-        @Query("per_page") perPage: Int = 100
+        @Query("per_page") perPage: Int
     ): Call<List<DetailResponse>>
+
     @GET("users/{username}/following")
     fun getUsersFollowing(
         @Path("username") username: String,
         @Query("page") page: Int,
-        @Query("per_page") perPage: Int = 100
-    ): Call<List<DetailResponse>>
-}
+        @Query("per_page") perPage: Int
+    ): Call<List<DetailResponse>>}
